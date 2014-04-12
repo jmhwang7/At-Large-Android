@@ -8,7 +8,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -56,6 +55,7 @@ public class MainFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, 
 	        ViewGroup container, 
 	        Bundle savedInstanceState) {
+		super.onCreateView(inflater, container, savedInstanceState);
 	    View view = inflater.inflate(R.layout.fragment_main, container, false);
 	    authButton = (LoginButton) view.findViewById(R.id.authButton);
 	    authButton.setReadPermissions(Arrays.asList("user_friends"));
@@ -103,24 +103,6 @@ public class MainFragment extends Fragment {
 		if (state.isOpened()) {
 	        Log.i(TAG, "Logged in...");
 	        
-//	        new Request(session, "/me", null, HttpMethod.GET, new Request.Callback() {
-//				
-//				@Override
-//				public void onCompleted(Response response) {
-//					if (response.getGraphObject() != null) {
-//						JSONObject data;
-//						try {
-//							data = response.getGraphObject().getInnerJSONObject().getJSONObject("state");
-//							mUser = new User(data.getInt("id"), data.getString("name"));
-//						} catch (JSONException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//					}
-//					
-//				}
-//			}).executeAsync();
-	        
 	        new Request(session, "/me/friends", null, HttpMethod.GET, new Request.Callback() {
     	        public void onCompleted(Response response) {
     	        	Log.i(TAG, "response gotten.");
@@ -134,9 +116,13 @@ public class MainFragment extends Fragment {
 							if (mUser != null) {
 								mUser.setFriends(friends);
 								Log.i(TAG, "friends: " + mUser.getFriends().toString());
-								((MainActivity) getActivity()).friendsSet();
+								if (getActivity() != null) {
+									((MainActivity) getActivity()).friendsSet();
+									Log.w(TAG, "Switching views");
+//									((MainActivity) getActivity()).updateMap();
+								}
 							}
-//							Log.i(TAG, friends.toString());
+
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -145,11 +131,6 @@ public class MainFragment extends Fragment {
     	        }
     	     	}).executeAsync();
 	        
-//	        // Remove Facebook button from view. Log out from options menu
-//	        ViewGroup view = (ViewGroup) authButton.getParent();
-//	        if (null != view) {
-//	        	view.removeView(authButton);
-//	        }
 	    } else if (state.isClosed()) {
 	        Log.i(TAG, "Logged out...");
 	    }
@@ -167,8 +148,8 @@ public class MainFragment extends Fragment {
 	        }
 	    }
 	    
-//	    view.addView(authButton);
 	}
+	
 	
 	/**
 	 * Gets user

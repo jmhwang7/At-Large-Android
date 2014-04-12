@@ -5,9 +5,13 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +20,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.facebook.Session;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity {
 	private MainFragment mainFragment;
@@ -26,6 +35,9 @@ public class MainActivity extends FragmentActivity {
 	private CharSequence mDrawerTitle;
 	private User mUser = new User();
 	private static final String TAG = "MainActivity";
+	public static enum mainViews{
+		LOGIN, MAP
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +73,7 @@ public class MainActivity extends FragmentActivity {
 			// Add fragment on initial activity setup
 			mainFragment = new MainFragment();
 			mainFragment.setUser(mUser);
-			getSupportFragmentManager().beginTransaction()
-				.add(R.id.content_frame, mainFragment)
-				.commit();
+			switchViews(mainViews.LOGIN);
 			
 		}
 //		else {
@@ -73,15 +83,10 @@ public class MainActivity extends FragmentActivity {
 //		}
 		
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		if(handler == null) {handler = new Handler();}
 		
 	}
-	
-//	@Override
-//	public boolean onPrepareOptionsMenu(Menu menu) {
-//		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-//		menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
-//		return super.onPrepareOptionsMenu(menu);
-//	}
+	public Handler handler;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,43 +112,55 @@ public class MainActivity extends FragmentActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-//	/**
-//	 * A placeholder fragment containing a simple view.
-//	 */
-//	public static class PlaceholderFragment extends Fragment {
-//
-//		public PlaceholderFragment() {
-//		}
-//
-//		@Override
-//		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//				Bundle savedInstanceState) {
-//			View rootView = inflater.inflate(R.layout.fragment_main, container,
-//					false);
-//			return rootView;
-//		}
-//	}
 	
 	public void friendsSet() {
 		setListItems();
+		switchViews(MainActivity.mainViews.MAP);
 	}
 	
 	private void setListItems() {
-//		String[] a = new String[2];
-//		a[0] = "WERSDFSDF";
-//		a[1] = "SDFOSEURSDF";
 		if (mUser != null && mUser.getFriends() != null && mUser.getFriends().values() != null
 				&& mUser.getFriends().values().toArray() != null) {
 			List<String> res = new ArrayList<>(mUser.getFriends().values());
 			mDrawerList.setAdapter(new ArrayAdapter<String>(this,
 				R.layout.drawer_list_item, res.toArray(new String[0])));
 		}
+		Log.w("Hi", "I am alive");
 		if(mUser.getFriends() == null) {
-			throw new NullPointerException();
+			throw new RuntimeException("Hypothesis");
 		}
-//		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-//				android.R.layout.simple_list_item_1, a));
+		Log.w("Hi", "I am alive STILLLLLLLLLL");
 	}
+	
+	public void switchViews(mainViews s) {
+		Log.i(TAG, "switchViews called.");
+		Fragment fragment = null;
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		switch(s) {
+		case MAP:
+			if (fragmentManager.findFragmentById(R.id.map) == null) {
+				Log.w(TAG, "making new fragment called.");
+				fragment = (Fragment) new MainMapFragment();
+			}
+			else {
+				Log.w(TAG, " using this old fragment called.");
+				fragment = fragmentManager.findFragmentById(R.id.map);
+			}
+			break;
+		case LOGIN:
+			fragment = (Fragment) new MainFragment();
+			((MainFragment)fragment).setUser(mUser);
+			break;
+		default:
+			throw new RuntimeException("TODO: FIll in theis case");
+		}
+		Log.w(TAG, "Working on txn");
+		fragmentManager.beginTransaction()
+        .replace(R.id.content_frame, fragment)
+        .commit();
+		Log.w(TAG, "Finished the txn");
+	}
+	
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
