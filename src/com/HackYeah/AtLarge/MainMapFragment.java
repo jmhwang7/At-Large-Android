@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainMapFragment extends SupportMapFragment{
+	private static final String TAG = "SupportMapFragment";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
@@ -53,14 +54,43 @@ public class MainMapFragment extends SupportMapFragment{
 		if (map == null) {
 			throw new RuntimeException("map is null");
 		}
-		Log.w("AMMAMA", "OMGSSKLDFJKLJKFD");
 		LatLng sydney = new LatLng(-33.867, 151.206);
 		if (map != null) {
+			Log.w("AMMAMA", "OMGSSKLDFJKLJKFD");
+			Log.w(TAG, "map: camera position" + map.getCameraPosition().zoom);
+			Log.w(TAG, "map: map type " + map.getMapType());
 			map.setMyLocationEnabled(true);
-			map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-			map.addMarker(new MarkerOptions()
+			map.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13) , 5000, new GoogleMap.CancelableCallback() {
+				
+				@Override
+				public void onFinish() {
+					Log.w(TAG, "YEAHHHHHHH");
+					
+					
+				}
+				
+				@Override
+				public void onCancel() {
+					throw new RuntimeException("won't animate. this sucks.");
+					
+				}
+			});
+			map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+				
+				@Override
+				public void onMapClick(LatLng point) {
+					// TODO Auto-generated method stub
+					Log.e(TAG, "This is the data: " + point.toString());
+				}
+			});
+			Log.w(TAG, "marker: " + map.addMarker(new MarkerOptions()
 					.title("Sydney")
-					.position(sydney));
+					.position(sydney)).toString());
+			MarkerOptions options = new MarkerOptions();
+			options.position(new LatLng(-31.90, 115.86)).title("sydney");
+			map.addMarker(options);
+			Log.w(TAG, "map: camera position" + map.getCameraPosition().zoom);
+			Log.w("AMMAMA", "OMGSSKLDFJKLJKFD");
 		}
 	}
 	
