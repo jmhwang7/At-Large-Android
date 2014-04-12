@@ -118,6 +118,7 @@ public class MainFragment extends Fragment {
     	        }
     	     	}).executeAsync();
 	        
+	        
 	    } else if (state.isClosed()) {
 	        Log.i(TAG, "Logged out...");
 	    }
