@@ -18,6 +18,9 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		Intent i = new Intent(this, LocationService.class);
+		startService(i);
 		
 		if (savedInstanceState == null) {
 			// Add fragment on initial activity setup
