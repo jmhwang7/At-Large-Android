@@ -1,5 +1,7 @@
 package com.HackYeah.AtLarge;
 
+import java.util.ArrayList;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -14,7 +16,10 @@ public class MyLocation implements LocationListener {
 
 	public void onLocationChanged(Location loc) {
 		Log.w("LOCATION_WARN", "Location updated to: " + loc.toString());
-		System.out.println("Location updated to: " + loc.toString());;
+		ArrayList<String> arr = new ArrayList<String>();
+		arr.add(String.valueOf(loc.getLongitude()));
+		arr.add(String.valueOf(loc.getLatitude()));
+		RemoteService.updatePositionAsync(arr);
 	}
 
 	public void onProviderDisabled(String provider) {

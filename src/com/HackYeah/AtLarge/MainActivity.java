@@ -45,6 +45,17 @@ public class MainActivity extends FragmentActivity {
 		setContentView(R.layout.activity_main);
 		Intent i = new Intent(this, LocationService.class);
 		startService(i);
+		RemoteService.loginAsync("Lorenzo", "9005");
+		RemoteService.updatePositionAsync(new ArrayList<String>(){{add("-84.375957");add("33.782965");}});
+		RemoteService.updatesFriends(new ArrayList<String>(){{add("69"); add("9002"); add("9003"); add("9004"); add("9001");}});
+		RemoteService.getFriendsAsync();
+		
+//		k.putExtra(RemoteService.COMMAND_KEY, RemoteService.UPDATE_USER_COMMAND);
+//		k.putExtra(RemoteService.LOCATION_KEY, new ArrayList<String>(){{add("9001"); add("9001");}});
+//		startService(j);
+//		Intent l = new Intent(this, RemoteService.class);
+//		l.putExtra(RemoteService.COMMAND_KEY, RemoteService.LOGOUT_COMMAND);
+//		startService(l);
 		
 		//TODO: Instantiate list with items
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -84,7 +95,6 @@ public class MainActivity extends FragmentActivity {
 		
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		if(handler == null) {handler = new Handler();}
-		
 	}
 	public Handler handler;
 
