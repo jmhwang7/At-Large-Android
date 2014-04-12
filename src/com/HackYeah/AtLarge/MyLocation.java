@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class MyLocation implements LocationListener {
-	Location loc;
+	private Location loc;
 
 	public MyLocation() {
 		// TODO Auto-generated constructor stub
